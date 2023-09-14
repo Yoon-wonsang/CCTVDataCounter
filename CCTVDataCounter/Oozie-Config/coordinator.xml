@@ -1,0 +1,10 @@
+<coordinator-app name="cctv_workflow" frequency="${coord:minutes(5)}" start="${coord:current(0)}" end="${coord:current(1)}" timezone="UTC" xmlns="uri:oozie:coordinator:0.5">
+    <controls>
+        <timeout>60</timeout>
+    </controls>
+    <action>
+        <workflow>
+            <app-path>${serviceDir}/workflow</app-path>
+        </workflow>
+    </action>
+</coordinator-app>

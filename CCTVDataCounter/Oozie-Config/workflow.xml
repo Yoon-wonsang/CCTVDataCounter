@@ -1,0 +1,100 @@
+<workflow-app name="cctv_workflow"
+	xmlns="uri:oozie:workflow:1.0">
+	<start to="cctv_action_1" />
+
+	<action name="cctv_action_1">
+		<java>
+			<resource-manager>${resourceManager}</resource-manager>
+			<name-node>${nameNode}</name-node>
+			<prepare>
+				<delete path="${outputDir}" />
+			</prepare>
+			<configuration>
+				<property>
+					<name>mapreduce.job.jar</name>
+					<value>${serviceDir}/workflow/lib/CCTVDataCounter.jar</value>
+				</property>
+				<property>
+					<name>mapreduce.job.queuename</name>
+					<value>${queueName}</value>
+				</property>
+				<property>
+					<name>mapreduce.job.reduces</name>
+					<value>${reduceNum}</value>
+				</property>
+			</configuration>
+			<main-class>com.sec.cctv1.CctvMain</main-class>
+			<arg>${inputDir}/CCTV.csv</arg>
+			<arg>${outputDir}</arg>
+		</java>
+		<ok to="cctv_action_2" />
+		<error to="fail" />
+	</action>
+
+	<action name="cctv_action_2">
+		<java>
+			<resource-manager>${resourceManager}</resource-manager>
+			<name-node>${nameNode}</name-node>
+			<prepare>
+				<delete path="${outputDir}" />
+			</prepare>
+			<configuration>
+				<property>
+					<name>mapreduce.job.jar</name>
+					<value>${serviceDir}/workflow/lib/CCTVDataCounter.jar</value>
+				</property>
+				<property>
+					<name>mapreduce.job.queuename</name>
+					<value>${queueName}</value>
+				</property>
+				<property>
+					<name>mapreduce.job.reduces</name>
+					<value>${reduceNum}</value>
+				</property>
+			</configuration>
+			<main-class>com.sec.cctv2.CctvMain</main-class>
+			<arg>${inputDir}/CCTV.csv</arg>
+			<arg>${outputDir}</arg>
+		</java>
+		<ok to="cctv_action_3" />
+		<error to="fail" />
+	</action>
+
+	<action name="cctv_action_3">
+		<java>
+			<resource-manager>${resourceManager}</resource-manager>
+			<name-node>${nameNode}</name-node>
+			<prepare>
+				<delete path="${outputDir}" />
+			</prepare>
+			<configuration>
+				<property>
+					<name>mapreduce.job.jar</name>
+					<value>${serviceDir}/workflow/lib/CCTVDataCounter.jar</value>
+				</property>
+				<property>
+					<name>mapreduce.job.queuename</name>
+					<value>${queueName}</value>
+				</property>
+				<property>
+					<name>mapreduce.job.reduces</name>
+					<value>${reduceNum}</value>
+				</property>
+			</configuration>
+			<main-class>com.sec.cctv3.ReducerSideJoinMain</main-class>
+			<arg>${inputDir}/CCTV.csv</arg>
+			<arg>${inputDir}/BookName.csv</arg>
+			<arg>${outputDir}</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
+	<!-- 다른 액션들 정의 -->
+
+	<kill name="fail">
+		<message>CCTV workflow failed</message>
+	</kill>
+
+	<end name="end" />
+</workflow-app>
